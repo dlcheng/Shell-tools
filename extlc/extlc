@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+usage="Uasge: extlc [.c]"
+
+if [ $# -ne 1 ]; then
+	echo $usage
+	exit 1
+fi
+
+home_folder=$PWD
+total_line=0
+
+function main {
+	local num=0
+	local work_folder="$home_folder/$1"
+	local line_num=0
+	cd $work_folder
+	for local_file in `find ./ -maxdepth 1 -name "*$2"`; do
+		let "num=num+1"
+		local_file=${local_file##*/}
+		if [ $num -eq 1 ]; then
+			echo "$1" | sed 's/\/\{2,\}/\//g'
+		fi					
+		line_num=`wc -l < $local_file`
+		printf "%8.d %s\n" $line_num $local_file
+		let "total_line=total_line+line_num"
+	done
+	for local_folder in `ls -F | grep "/$"`; do
+		main "$1/$local_folder" "$2"
+	done
+}
+
+main ./ $1
+echo "Total $total_line"

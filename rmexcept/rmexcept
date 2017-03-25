@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# This tool reversely deletes files
+# in the local folder, the input conditions
+# are the files you want to keep.
+
+target=$(ls -F)
+
+# "$target" is row seperated and suitable
+# for grep to process. 
+# $target has only one line.
+
+for args in $@; do
+	target=$(echo "$target" | grep -v "$args")
+done
+
+echo "Keep:   " $@
+echo "Delete: " $target
+rm -rf $target
